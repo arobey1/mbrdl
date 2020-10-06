@@ -3,30 +3,52 @@ import os
 
 class Saver:
     def __init__(self, args, n_epochs):
-        self._top1 = []
-        self._top5 = []
+        """Saves top1 and top5 accuracies during training.
+        
+        Params:
+            args: Command line arguments.
+            n_epochs: Number of epochs for training.
+        """
+
+        self._top1, self._top5 = [], []
         self._args = args
         self._n_epochs = n_epochs
 
+        os.makedirs(args.save_path, exist_ok=True)
+
     def update(self, top1, top5):
+        """Update top1 and top5 lists and save updated DataFrame.
+        
+        Params:
+            top1: Top1 accuracy from current epoch.
+            top5: Top5 accuracy from current epoch.
+        """
+
         self._top1.append(top1)
         self._top5.append(top5)
         self.save()
 
     def save(self):
-        alg = self.get_alg()
-        epochs = range(self._args.start_epoch, self._n_epochs)
+        """Save current top1/top5 accuracies to a DataFrame."""
 
+        alg = self.get_alg()
+
+        # columns and data to be saved in DataFrame
         columns = ['Epoch', 'Top1-Accuracy', 'Top5-Accuracy', 'Algorithm']
         data = list(zip(
-            epochs, self._top1, self._top5, [alg for _ in range(len(epochs))]
+            range(self._args.start_epoch, self._n_epochs),  # epochs
+            self._top1, 
+            self._top5, 
+            [alg for _ in range(len(epochs))]
         ))
         df = pd.DataFrame(data, columns=columns)
 
+        # save DataFrame to file
         fname = os.path.join(self._args.save_path, f'{alg}-results.pkl')
         df.to_pickle(fname)
 
     def get_alg(self):
+        """Get algorithm for DataFrame save name."""
 
         if self._args.mrt is True:
             return f'MRT-{self._args.k}'
