@@ -1,8 +1,29 @@
 # Model-Based Robust Deep Learning (MBRDL)
 
-In this repository, we include the code necessary for reproducing the code used in [Model-Based Robust Deep Learning](https://arxiv.org/abs/2005.10247).  In particular, we include the code necessary for both training models of natural variation as well as the code needed to train classifiers using these learned models.
+In this repository, we include the code necessary for reproducing the code used in [Model-Based Robust Deep Learning](https://arxiv.org/abs/2005.10247).  In particular, we include the code necessary for both training models of natural variation as well as the code needed to train classifiers using these learned models.  A brief summary of the functionality provided in this repo is provided below:
 
-Th
+
+First, we given instructions for how to setup the appropriate environment for this repository.
+* [Setup instructions](#setup-instructions)
+
+Next, we give details about how to train classifiers using the MBRDL paradigm.
+
+* [Training classifiers using MAT, MRT, and MDA](#training-classifiers-in-the-mbrdl-paradigm)  
+    1. [Dataset selection](#dataset-selection)
+    2. [Architecture and hyperparameters](#architecture-and-hyperparameters)
+    3. [Composing models of natural variation](#composing-models-of-natural-variation)
+    4. [Training algorithms](#training-algorithms)
+    5. [Distributed settings](#distributed-settings)
+
+We also provide code that can be used to train models of natural variation using the [MUNIT](https://arxiv.org/abs/1804.04732) framework.
+
+* [Training models of natural variation](#training-models-of-natural-variation)
+    1. [Retrieving a saved model of natural variation](#retrieving-a-saved-model-of-natural-variation)
+    2. [Using other architectures for models of natural variation](#using-other-architectures-for-models-of-natural-variation)
+
+Finally, we identify common usage issues and provide solutions.
+
+* [Trouble-shooting](#trouble-shooting)
 
 ## Setup instructions
 
@@ -91,7 +112,7 @@ export MODEL_PATH_2=./core/models/learned_models/svhn-contrast.pt
 and then add `--model-paths $MODEL_PATH_1 $MODEL_PATH_2` to the python command at the bottom of `launch.sh`.
 
 
-### Training algorithm
+### Training algorithms
 
 By default, the script will train a classifier with the standard ERM formulation.  However, by adding flags, you can train classifiers using the three model-based algorithms from our paper (MAT, MRT, and MDA) as well as PGD.  For example, to train with MRT and k=10, you can add the flags `--mrt -k 10` to the `python -m torch.distributed.launch ...` command at the bottom of the file.  By replacing `--mrt` with `--mat` or `--mda`, you can change the algorithm to MAT or MDA respectively.  Similarly, you can use the `--pgd` flag to train with the [PGD algorithm](https://arxiv.org/abs/1706.06083).
 
@@ -145,7 +166,7 @@ Here, `mb_images` will be a batch of images that look semantically similar to `i
 
 As MUNIT learns mappings in both directions (e.g. from domain A-->B and from domain B--> A), we use the `reverse` flag to control which direction the MUNIT model maps.  By default, `reverse=False`, meaning that G will map from domain A to B.  If `reverse=True`, G will map from domain B to A.
 
-### Using other architectures for G(x, δ)
+### Using other architectures for models of natural variation
 
 To use other architectures for G, you can simply replace the `MUNITModelOfNatVar` instantiation in the `load_model` function in `core/models/load.py`.  In particular, the only requirement is that a model of natural variation should be instantiated as a `torch.nn.Module` with a forward pass function `forward` that takes as input a batch of images and a suitably sized nuisance parameter, i.e.
 
