@@ -1,0 +1,8 @@
+
+__pycache__/
+datasets/
+*.pyc
+env/
+core/models/learned_models
+core/models/munit/results
+logs/
