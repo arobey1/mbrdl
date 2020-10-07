@@ -56,14 +56,21 @@ We also need to install NVIDIA's half-precision training tool [apex](https://git
 
 We also include the code needed to train classifiers that are robust to natural variation.  Our implementation is based on the [Lambda Labs implementation](https://github.com/lambdal/imagenet18) of the ImageNet training repository.  
 
-To train a classifier, you can run the following shell script:
+To train a classifier on SVHN, GTSRB, or CURE-TSR, you can run the following shell script:
 
 ```bash
-chmod +x launch.sh
-./launch.sh
+chmod +x train_basic.sh
+./train_basic.sh
 ```
 
-Editing the `launch.sh` script will allow you to control the dataset, optimization parameters, model of natural variation, classifier architecture, and other hyperparameters.  In what follows, we describe different settings for this file.
+Editing the `train_basic.sh` script will allow you to control the dataset, optimization parameters, model of natural variation, classifier architecture, and other hyperparameters.  To train on ImageNet/ImageNet-c, we provide a separate script, which can be run in the following way:
+
+```bash
+chmod +x train_imagenet_script.sh
+./train_imagenet.sh
+```
+
+In what follows, we describe different settings for thes files.
 
 ### Dataset selection
 
@@ -147,7 +154,7 @@ export MODEL_PATH_1=./core/models/learned_models/svhn-brightness.pt
 export MODEL_PATH_2=./core/models/learned_models/svhn-contrast.pt
 ```
 
-and then add `--model-paths $MODEL_PATH_1 $MODEL_PATH_2` to the python command at the bottom of `launch.sh`.
+and then add `--model-paths $MODEL_PATH_1 $MODEL_PATH_2` to the python command at the bottom of `train_bash.sh` or `train_imagenet.sh`.
 
 
 ### Training algorithms
@@ -175,7 +182,7 @@ chmod +x train_munit.sh
 ./train_munit.sh
 ```
 
-You can change the dataset and various directories using the flags in `train_munit.sh`.  In particular, you can set the `DATASET` and `SOURCE` environmental variables in the same was as in `launch.sh`.  You can also set various paths, such as the path to the MUNIT configuration file and to directory where you would like to save your output:
+You can change the dataset and various directories using the flags in `train_munit.sh`.  In particular, you can set the `DATASET` and `SOURCE` environmental variables in the same was as in `train_basic.sh` and `train_imagenet.sh`.  You can also set various paths, such as the path to the MUNIT configuration file and to directory where you would like to save your output:
 
 ```bash
 export CONFIG_PATH=core/models/munit/munit.yaml
