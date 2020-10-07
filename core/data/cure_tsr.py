@@ -16,7 +16,6 @@ class CUREDataset(Dataset):
         self._level = level
         self._return_labels = return_labels
         self._dom = f'{self._challenge}-{level}'
-        root = './datasets/cure_tsr/raw_data'
 
         transform = tv.transforms.Compose([
             tv.transforms.Resize((args.data_size, args.data_size)),
@@ -24,7 +23,7 @@ class CUREDataset(Dataset):
         ])
 
         split = 'Real_Test' if 'test' in self._mode else 'Real_Train'
-        self._data = self.__load_all_data(root, split, transform)
+        self._data = self.__load_all_data(args.train_data_dir, split, transform)
 
     def __getitem__(self, index):
 

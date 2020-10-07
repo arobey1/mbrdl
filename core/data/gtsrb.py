@@ -20,6 +20,11 @@ class GTSRBSubsets(Dataset):
                 - choices:  'train' | 'test'.
             challenge: Kind of natural variation.
                 - choices: 'brightness' | 'contrast'
+            dom: Domain to be used.
+                - choices: 'low' | 'medium' | 'high'
+            args: Command line arguments.
+            return_labels: If True, returns image and label.  Otherwise
+                only returns image (without label).
         """
 
         self._mode = mode
@@ -33,7 +38,7 @@ class GTSRBSubsets(Dataset):
         ])
 
         split = 'test' if 'test' in self._mode else 'train'
-        self._data = GTSRB('datasets/gtsrb/GTSRB', split=split, transform=transform).data
+        self._data = GTSRB(args.train_data_dir, split=split, transform=transform).data
 
         if self._challenge == 'contrast+brightness':
             self._subsets_dict = self.extract_both()
@@ -45,26 +50,20 @@ class GTSRBSubsets(Dataset):
                 self._thresh = GTSRB_BRIGHTNESS_THRESH
 
             self._subsets_dict, self._values = self.extract_challenge()
-        print([(name, len(ls)) for (name, ls) in self._subsets_dict.items()])
+        
+        if args.local_rank == 0 and args.setup_verbose is True:
+            print(f'\tGTSRB {split} set: {[(name, len(ls)) for (name, ls) in self._subsets_dict.items()]}')
 
     def __getitem__(self, index: int):
 
-        img, label = self.mod_index(index, self._dom)
+        img, label = self._subsets_dict[self._dom][index]
         if self._return_labels is True:
             return img, label
         return img
 
-        
-
     def __len__(self) -> int:
-        """Returns length of dataset.  If self._num_items is set, this number is
-        returned.  Otherwise, we return the smallest length of the low, medium,
-        and high subsets."""
+        """Number of datapoints in dataset."""
 
-        if bool(self._subsets_dict) is False:
-            raise ValueError(f'You must set {subsets_dict} from child class.')
-
-        # return min([len(subset) for (_, subset) in self._subsets_dict.items()])
         return len(self._subsets_dict[self._dom])
 
     def extract_challenge(self) -> dict:
@@ -98,6 +97,7 @@ class GTSRBSubsets(Dataset):
         return {'low': low, 'medium': medium, 'high': high, 'all': self._data}, values
 
     def extract_both(self):
+        """Extract both subsets based on contrast and brightness."""
 
         contrast_fn = lambda x: 255 * (torch.max(x) - torch.min(x))
         brightness_fn = lambda x: torch.mean(x) * 255.
@@ -114,20 +114,6 @@ class GTSRBSubsets(Dataset):
                 high.append((img, label))
 
         return {'low': low, 'high': high}
-
-    def mod_index(self, index: int, name: str):
-        """Ensures that we never get an IndexError when indexing into a data subset.
-
-        Params:
-            index: Index of datum requrested by __getitem__ method.
-            name: Name of data subset.  Choices: 'low', 'medium', 'high'.
-
-        Returns:
-            (img, label) pair at index that will not cause error.
-        """
-
-        data_list = self._subsets_dict[name]
-        return data_list[index % len(data_list)]
 
 class GTSRB:
     def __init__(self, root, split, transform, num_classes=43):

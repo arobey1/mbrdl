@@ -77,14 +77,14 @@ def get_cure_tsr_loaders(args):
     """Get dataloaders for CURE-TSR dataset."""
 
     if args.local_rank == 0:
-        print(f'Loading CURE-TSR {source} dataset...')
+        print(f'Loading CURE-TSR {args.source_of_nat_var} dataset...')
 
-    train_dataset = CUREDataset('train', source, level=0, args=args)
+    train_dataset = CUREDataset('train', args.source_of_nat_var, level=0, args=args)
     train_sampler = DistributedSampler(train_dataset) if args.distributed is True else None
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=(train_sampler is None),
         num_workers=args.workers, pin_memory=True, sampler=train_sampler)
 
-    val_dataset = CUREDataset('test', source, level=5, args=args)
+    val_dataset = CUREDataset('test', args.source_of_nat_var, level=5, args=args)
     val_sampler = DistributedSampler(val_dataset) if args.distributed is True else None
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size,
         num_workers=args.workers, pin_memory=True, sampler=val_sampler)
