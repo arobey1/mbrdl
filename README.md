@@ -26,6 +26,10 @@ Next, we give details about how to train classifiers using the MBRDL paradigm.  
     5. [Training algorithms](#training-algorithms)
     6. [Distributed settings](#distributed-settings)
 
+Following this, we give a high-level overview of the structure of this repository, as well as an overview of the scripts that are included for training models of natural variation and classifiers that are robust to natural variation.
+
+* [An overview of the structure of this repository](#an-overview-of-the-structure-of-this-repository)
+
 We also provide code that can be used to train models of natural variation using the [MUNIT](https://arxiv.org/abs/1804.04732) framework.  The code that we use to train these models is largely based on the original [implementation of MUNIT](https://github.com/NVlabs/MUNIT).
 
 * [Training models of natural variation](#training-models-of-natural-variation)
@@ -51,6 +55,27 @@ pip3 install -r requirements.txt
 ```
 
 We also need to install NVIDIA's half-precision training tool [apex](https://github.com/NVIDIA/apex).  The setup instructions for `apex` are [here](https://github.com/NVIDIA/apex#quick-start).    
+
+## An overview of the structure of this repository
+
+In this repository, we provide four scripts that can be used to train models of natural variation as well as classifiers that are robust against natural variation; the scripts `train_munit.sh` and `train_munit_imagenet.sh` can be used to train models of natural variation with the MUNIT framework, and the scripts `train_basic.sh` and `train_imagenet.sh` can be used to train classifiers using the MBRDL paradigm.  
+
+All of the components to train models of natural variation and classifiers is included in the `core/` directory.  In particular, `core/` is organized in the following way:
+
+```bash
+mbrdl/core/
+├── classifiers
+├── data
+├── models
+├── training
+├── train_munit.py
+├── train.py
+└── utils
+```
+
+The `classifiers/` directory contains all code necessary to initialize different classifier architectures.  The `data/` directory contains dataloaders for MUNIT and for training classifiers for SVHN, CURE-TSR, GTSRB, and ImageNet/ImageNet-c.  The `models/` directory has code that can be used to load and train models of natural variation using the MUNIT framework.  The `training/` directory contains the training algorithms (including implementations of MAT, MRT, and MDA) and schedulers that are used to train classifiers.  The `utils/` directory has a variety of utilities that are used throughout the scripts that train classifiers in the MBRDL paradigm.
+
+The two main training python files are `train_munit.py` and `train.py`.  As the name suggests, `train_munit.py` can be used to train models of natural variation using MUNIT.  `train.py` is a python file that trains classifiers in a distributed fashion.
 
 ## Training classifiers in the MBRDL paradigm
 
