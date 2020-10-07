@@ -16,7 +16,7 @@ def get_loaders(args):
         return get_imagenet_loaders(args)
     elif args.dataset == 'svhn':
         return get_svhn_loaders(args)
-    elif args.dataset == 'cure-tsr':
+    elif args.dataset == 'cure-tsr' or args.dataset == 'cure_tsr':
         return get_cure_tsr_loaders(args)
     elif args.dataset == 'gtsrb':
         return get_gtsrb_loaders(args)
