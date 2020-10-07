@@ -1,13 +1,16 @@
 #!/bin/bash
 
+# This file can be used to train models of natural variation for the
+# SVHN, GTSRB, and CURE-TSR datasets.
 
-export DATASET='gtsrb'
-export SOURCE='brightness'
-export SZ=64
+# Variables needed to select dataset and source of natural variation
+export DATASET='cure-tsr'
+export DATA_DIR=./datasets/cure_tsr/raw_data
+export SOURCE='snow'
+export SZ=32
 
-# Path to MUNIT configuration file
-# You can edit this file to change the number of iterations, how frequently
-# checkpoints are saved, and other properties of MUNIT.
+# Path to MUNIT configuration file.  Edit this file to change the number of iterations, 
+# how frequently checkpoints are saved, and other properties of MUNIT.
 # The parameter `style_dim` corresponds to the dimension of `delta` in our work.
 export CONFIG_PATH=core/models/munit/munit.yaml
 
@@ -16,4 +19,5 @@ export OUTPUT_PATH=core/models/munit/results
 
 python3 core/train_munit.py \
     --config $CONFIG_PATH --dataset $DATASET --source-of-nat-var $SOURCE \
-    --output_path $OUTPUT_PATH --data-size $SZ
+    --output_path $OUTPUT_PATH --data-size $SZ --train-data-dir $DATA_DIR
+    
