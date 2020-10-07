@@ -17,14 +17,27 @@ import shutil
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--config', type=str, default='core/models/munit/munit.yaml', help='Path to the config file.')
-parser.add_argument('--output_path', type=str, default='./munit', help="outputs path")
+parser.add_argument('--config', type=str, default='core/models/munit/munit.yaml', 
+                        help='Path to the MUNIT config file.')
+parser.add_argument('--output_path', type=str, default='./munit', 
+                        help="Path where images/checkpoints will be saved")
 parser.add_argument('--dataset', type=str, default='svhn', choices=['svhn', 'cure-tsr', 'gtsrb', 'imagenet'], 
                         help='Dataset to use for training MUNIT')
-parser.add_argument('--data-size', type=int, default=32, help='Image size for training MUNIT')
-parser.add_argument("--resume", action="store_true")
-parser.add_argument('--source-of-nat-var', type=str, help='Type of natural variation to train on')
+parser.add_argument('--data-size', type=int, default=32, 
+                        help='Image size for training MUNIT')
+parser.add_argument("--resume", action="store_true",
+                        help='Resumes training from last avaiable checkpoint')
+parser.add_argument('--source-of-nat-var', type=str, 
+                        help='Type of natural variation to train on')
+parser.add_argument('--train-data-dir', metavar='DIR', required=True, 
+                        help='Path to training dataset (only used for ImageNet).')
+parser.add_argument('--val-data-dir', metavar='DIR', 
+                        help='Path to validation dataset (only used for ImageNet).')
 args = parser.parse_args()
+
+# Added for compatibility with train.py
+args.local_rank = 0
+args.setup_verbose = True
 
 cudnn.benchmark = True
 
