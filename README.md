@@ -1,6 +1,15 @@
 # Model-Based Robust Deep Learning (MBRDL)
 
-In this repository, we include the code necessary for reproducing the code used in [Model-Based Robust Deep Learning](https://arxiv.org/abs/2005.10247).  In particular, we include the code necessary for both training models of natural variation as well as the code needed to train classifiers using these learned models.  A brief summary of the functionality provided in this repo is provided below:
+In this repository, we include the code necessary for reproducing the code used in [Model-Based Robust Deep Learning](https://arxiv.org/abs/2005.10247).  In particular, we include the code necessary for both training models of natural variation as well as the code needed to train classifiers using these learned models.  A brief summary of the functionality provided in this repo is provided below in the table of contents.  If you find this repository useful in your research, please consider citing:
+
+```latex
+@article{robey2020model,
+  title={Model-Based Robust Deep Learning},
+  author={Robey, Alexander and Hassani, Hamed and Pappas, George J},
+  journal={arXiv preprint arXiv:2005.10247},
+  year={2020}
+}
+```
 
 ## Table of contents
 
@@ -227,17 +236,4 @@ If this shows any running processes, you can kill them individually by their PID
 
 ```bash
 pkill -9 python
-```
-
-## Citation
-
-If you find this useful in your research, please consider citing:
-
-```latex
-@article{robey2020model,
-  title={Model-Based Robust Deep Learning},
-  author={Robey, Alexander and Hassani, Hamed and Pappas, George J},
-  journal={arXiv preprint arXiv:2005.10247},
-  year={2020}
-}
 ```
