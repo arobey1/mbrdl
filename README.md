@@ -32,6 +32,10 @@ We also provide code that can be used to train models of natural variation using
     1. [Retrieving a saved model of natural variation](#retrieving-a-saved-model-of-natural-variation)
     2. [Using other architectures for models of natural variation](#using-other-architectures-for-models-of-natural-variation)
 
+In addition to providing functionality to train new models of natural variation, we also provide a library of pre-trained models of natural variation in a Google Drive folder.
+
+* [A library of pre-trained models of natural variation](#a-library-of-pre-trained-models-of-natural-variation)
+
 Finally, we identify common usage issues and provide solutions.
 
 * [Trouble-shooting](#trouble-shooting)
@@ -99,7 +103,7 @@ Note that when training with ImageNet, the `SOURCE` flag will not be used.
 
 
 
-### Architecture and hyperparameters
+### Architectures, hyperparameters, and optimizers
 
 To select the classifier architecture, you can set the following flags:
 
@@ -119,8 +123,9 @@ export SZ=224                   # dataset image size (SZ x SZ x 3)
 export BS=64                    # batch size
 ```
 
-
 These flags will also allow you to set the number of output classes for the given architecture, the size of the images in the dataset, and the (training) batch size.  
+
+You can also select the optimizer to be used for training the given `ARCHITECTURE`.  Currently, two optimizers are supported: SGD with momentum and [AdaDelta](https://arxiv.org/abs/1212.5701).  In our paper, we used SGD for the experiments on ImageNet, and AdaDelta for every other experiment (e.g. MNIST, SVHN, CURE-TSR, GTSRB, etc.).  To select an optimizer, you can use the `--optimizer` flag, which currently supports the arguments `sgd` or `adadelta`.  
 
 ### Using pre-trained models of natural variation
 
@@ -217,6 +222,10 @@ class MyModel(nn.Module):
     # Load model from file and return
     return
 ```
+
+## A library of pre-trained models of natural variation
+
+We provide a library of pre-trained models of natural variation in a public Google Drive folder.  In particular, this folder contains models for SVHN, GTSRB, CURE-TSR and ImageNet/ImageNet-c
 
 ## Trouble-shooting
 
