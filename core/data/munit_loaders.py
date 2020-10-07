@@ -7,7 +7,7 @@ import torchvision.datasets as datasets
 from data.svhn import SVHNSubsets
 from data.cure_tsr import CUREDataset
 from data.gtsrb import GTSRBSubsets
-from data.imagenet import DistValSampler, BatchTransformDataLoader
+from data.imagenet import BasicImageNetDataset
 
 def get_munit_loaders(args):
     """Return dataloaders based on command line argument for dataset."""
@@ -18,8 +18,21 @@ def get_munit_loaders(args):
         return get_gtsrb_loaders(args)
     elif args.dataset == 'cure-tsr' or args.dataset == 'cure_tsr':
         return get_cure_tsr_loaders(args)
+    elif args.dataset == 'imagenet':
+        return get_imagenet_loaders(args)
     else:
         raise NotImplementedError(f'Dataset {args.dataset} is not implemented.')
+
+def get_imagenet_loaders(args):
+    """Get loaders with ImageNet/ImageNet-c data for training MUNIT."""
+
+    if args.local_rank == 0:
+        print(f'Loading ImageNet dataset...')
+
+    train_A = test_A = BasicImageNetDataset(args.train_data_dir, args=args)
+    train_B = test_B = BasicImageNetDataset(args.val_data_dir, args=args)
+
+    return _to_loader(train_A, train_B, test_A, test_B)
 
 def get_svhn_loaders(args):
     """Get loaders with SVHN data for training MUNIT."""
