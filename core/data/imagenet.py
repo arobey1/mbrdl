@@ -1,5 +1,8 @@
 import torch
 from torch.utils.data.sampler import Sampler
+from torch.utils.data import Dataset
+import torchvision as tv
+import torchvision.datasets as datasets
 
 import numpy as np
 import math
@@ -82,3 +85,22 @@ class DistValSampler(Sampler):
 
     def set_epoch(self, epoch): 
         return
+
+class BasicImageNetDataset(Dataset):
+
+    def __init__(self, root, args):
+        """Dataset for MUNIT ImageNet training."""
+        
+        xforms = tv.transforms.Compose([
+            tv.transforms.Resize((args.data_size, args.data_size)),
+            tv.transforms.RandomHorizontalFlip(),
+            tv.transforms.ToTensor(),
+        ])
+        self._data = datasets.ImageFolder(root, xforms)
+
+    def __getitem__(self, index):
+        img, _ = self._data[index]
+        return img
+
+    def __len__(self):
+        return len(self._data)
