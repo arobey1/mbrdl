@@ -52,6 +52,7 @@ After cloning this repository, the first step is to setup a virtual environment.
 python3 -m venv mbrdl
 source mbrdl/bin/activate
 pip3 install -r requirements.txt
+pip3 install https://download.pytorch.org/whl/cu100/torch-1.1.0-cp36-cp36m-linux_x86_64.whl
 ```
 
 We also need to install NVIDIA's half-precision training tool [apex](https://github.com/NVIDIA/apex).  The setup instructions for `apex` are [here](https://github.com/NVIDIA/apex#quick-start).    
