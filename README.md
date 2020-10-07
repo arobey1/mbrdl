@@ -12,9 +12,10 @@ Next, we give details about how to train classifiers using the MBRDL paradigm.  
 * [Training classifiers using MAT, MRT, and MDA](#training-classifiers-in-the-mbrdl-paradigm)  
     1. [Dataset selection](#dataset-selection)
     2. [Architecture and hyperparameters](#architecture-and-hyperparameters)
-    3. [Composing models of natural variation](#composing-models-of-natural-variation)
-    4. [Training algorithms](#training-algorithms)
-    5. [Distributed settings](#distributed-settings)
+    3. [Using pre-trained models of natural variation](#using-pre-trained-models-of-natural-variation)
+    4. [Composing models of natural variation](#composing-models-of-natural-variation)
+    5. [Training algorithms](#training-algorithms)
+    6. [Distributed settings](#distributed-settings)
 
 We also provide code that can be used to train models of natural variation using the [MUNIT](https://arxiv.org/abs/1804.04732) framework.  The code that we use to train these models is largely based on the original [implementation of MUNIT](https://github.com/NVlabs/MUNIT).
 
@@ -49,17 +50,15 @@ chmod +x launch.sh
 ./launch.sh
 ```
 
-
-
 Editing the `launch.sh` script will allow you to control the dataset, optimization parameters, model of natural variation, classifier architecture, and other hyperparameters.  In what follows, we describe different settings for this file.
 
 ### Dataset selection
-
 
 By editing flags at the beginning of the file, you can change the dataset and the source of natural variation that are used for training/testing the classifier.  For example, to run with SVHN, you can set:
 
 ```bash
 export DATASET='svhn'
+export TRAIN_DIR=./datasets/svhn
 export SOURCE='brightness'
 ```
 
@@ -67,6 +66,7 @@ The choices for `SOURCE` for SVHN are choices are 'brightness', 'contrast', and 
 
 ```bash
 export DATASET='gtsrb'
+export TRIAIN_DIR=./datasets/gtsrb/GTSRB
 export SOURCE='brightness'
 ```
 
@@ -74,10 +74,21 @@ For CURE-TSR, you can select any of the sources of natural variation listed in t
 
 ```bash
 export DATASET='cure-tsr'
+export TRAIN_DIR=./datasets/cure_tsr/raw_data
 export SOURCE='snow'
 ```
 
-To train with ImageNet, you need to set the `TRAIN_DIR` and `VAL_DIR` flags depending on the install location of the ImageNet dataset.  This is to allow you to train with ImageNet and then evaluate on ImageNet-c.  Note that when training with ImageNet, the `SOURCE` flag will not be used.
+To train with ImageNet, you need to set the `TRAIN_DIR` and `VAL_DIR` flags depending on the install location of the ImageNet dataset.  This is to allow you to train with ImageNet and then evaluate on ImageNet-c.  
+
+```bash
+export DATASET='imagenet'
+export TRAIN_DIR=./datasets/imagenet/train
+export VAL_DIR=./datasets/imagenet-c/weather/snow/3
+```
+
+Note that when training with ImageNet, the `SOURCE` flag will not be used.
+
+
 
 ### Architecture and hyperparameters
 
@@ -90,9 +101,21 @@ export SZ=32                # dataset image size (SZ x SZ x 3)
 export BS=64                # batch size
 ```
 
-The 'basic' architecture is a simple CNN with two convolutional layers and two feed-forward layers.  The program will also accept any of the architectures in [torchvision.models](https://pytorch.org/docs/stable/torchvision/models.html), including AlexNet and ResNet50.  These flags will also allow you to set the number of output classes for the given architecture, the size of the images in the dataset, and the (training) batch size.
+The 'basic' architecture is a simple CNN with two convolutional layers and two feed-forward layers.  The program will also accept any of the architectures in [torchvision.models](https://pytorch.org/docs/stable/torchvision/models.html), including AlexNet and ResNet50.  For example, an appropriate ImageNet configuration could be something like this:
 
-Additionally, you can set the path to a saved model of natural variation and the dimension of the nuisance space Δ by setting
+```bash
+export ARCHITECTURE='resnet50'
+export N_CLASSES=1000           # number of classes
+export SZ=224                   # dataset image size (SZ x SZ x 3)
+export BS=64                    # batch size
+```
+
+
+These flags will also allow you to set the number of output classes for the given architecture, the size of the images in the dataset, and the (training) batch size.  
+
+### Using pre-trained models of natural variation
+
+Yu can set the path to a saved model of natural variation and the dimension of the nuisance space Δ by setting
 
 ```bash
 export MODEL_PATH=./core/models/learned_models/svhn-brightness.pt
@@ -115,7 +138,7 @@ and then add `--model-paths $MODEL_PATH_1 $MODEL_PATH_2` to the python command a
 
 ### Training algorithms
 
-By default, the script will train a classifier with the standard ERM formulation.  However, by adding flags, you can train classifiers using the three model-based algorithms from our paper (MAT, MRT, and MDA) as well as PGD.  For example, to train with MRT and k=10, you can add the flags `--mrt -k 10` to the `python -m torch.distributed.launch ...` command at the bottom of the file.  By replacing `--mrt` with `--mat` or `--mda`, you can change the algorithm to MAT or MDA respectively.  Similarly, you can use the `--pgd` flag to train with the [PGD algorithm](https://arxiv.org/abs/1706.06083).
+By default, the script will train a classifier with the standard ERM formulation.  However, by adding flags, you can train classifiers using the three model-based algorithms from our paper (MAT, MRT, and MDA) as well as PGD.  For example, to train with MRT and k=10, you can add the flags `--mrt -k 10` to the `python -m torch.distributed.launch ...` command at the bottom of the file.  By replacing `--mrt` with `--mat` or `--mda`, you can change the algorithm to MAT or MDA respectively.  Similarly, you can use the `--pgd` flag to train with the [PGD algorithm](https://arxiv.org/abs/1706.06083).  By default, PGD runs with a step size of 0.01, ɛ=8/255, and 20 steps of gradient ascent.
 
 ### Distributed settings
 
@@ -185,7 +208,6 @@ class MyModel(nn.Module):
     # Load model from file and return
     return
 ```
-
 
 ## Trouble-shooting
 
