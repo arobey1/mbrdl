@@ -7,7 +7,7 @@ import torchvision.datasets as datasets
 from data.svhn import SVHNSubsets
 from data.cure_tsr import CUREDataset
 from data.gtsrb import GTSRBSubsets
-from data.imagenet import DistValSampler, BatchTransformDataLoader
+from data.imagenet import DistValSampler, BatchTransformDataLoader, fast_collate
 
 def get_loaders(args):
     """Load datasets for training/validating classifiers."""
