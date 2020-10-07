@@ -32,11 +32,12 @@ class Saver:
         """Save current top1/top5 accuracies to a DataFrame."""
 
         alg = self.get_alg()
+        epochs = range(self._args.start_epoch, self._n_epochs)
 
         # columns and data to be saved in DataFrame
         columns = ['Epoch', 'Top1-Accuracy', 'Top5-Accuracy', 'Algorithm']
         data = list(zip(
-            range(self._args.start_epoch, self._n_epochs),  # epochs
+            epochs,
             self._top1, 
             self._top5, 
             [alg for _ in range(len(epochs))]
