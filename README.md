@@ -258,7 +258,13 @@ class MyModel(nn.Module):
 
 ## A library of pre-trained models of natural variation
 
-We provide a library of pre-trained models of natural variation in a public Google Drive folder.  In particular, this folder contains models for SVHN, GTSRB, CURE-TSR and ImageNet/ImageNet-c
+We provide a library of pre-trained models of natural variation in a public Google Drive folder.  In particular, this folder contains models for SVHN, GTSRB, CURE-TSR and ImageNet/ImageNet-c:
+
+```
+https://drive.google.com/drive/folders/1J2OQSWuH4VQwWkHDTz_3mM7fQI2Iws6o?usp=sharing
+```
+
+We plan to update this folder frequently with more models of natural variation.
 
 ## Trouble-shooting
 
