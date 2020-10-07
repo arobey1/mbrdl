@@ -12,7 +12,7 @@ def get_parser():
     # paths to various directories
     parser.add_argument('--train-data-dir', metavar='DIR', required=True, 
                             help='Path to training dataset (only used for ImageNet).')
-    parser.add_argument('--val-data-dir', metavar='DIR', required=True, 
+    parser.add_argument('--val-data-dir', metavar='DIR', 
                             help='Path to validation dataset (only used for ImageNet).')
     parser.add_argument('--save-path', type=str, 
                             help='Path for saving outputs')
