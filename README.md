@@ -2,11 +2,12 @@
 
 In this repository, we include the code necessary for reproducing the code used in [Model-Based Robust Deep Learning](https://arxiv.org/abs/2005.10247).  In particular, we include the code necessary for both training models of natural variation as well as the code needed to train classifiers using these learned models.  A brief summary of the functionality provided in this repo is provided below:
 
+## Table of contents
 
 First, we given instructions for how to setup the appropriate environment for this repository.
 * [Setup instructions](#setup-instructions)
 
-Next, we give details about how to train classifiers using the MBRDL paradigm.
+Next, we give details about how to train classifiers using the MBRDL paradigm.  ur implementation is based on the [Lambda Labs implementation](https://github.com/lambdal/imagenet18) of the ImageNet training repository.  
 
 * [Training classifiers using MAT, MRT, and MDA](#training-classifiers-in-the-mbrdl-paradigm)  
     1. [Dataset selection](#dataset-selection)
@@ -15,7 +16,7 @@ Next, we give details about how to train classifiers using the MBRDL paradigm.
     4. [Training algorithms](#training-algorithms)
     5. [Distributed settings](#distributed-settings)
 
-We also provide code that can be used to train models of natural variation using the [MUNIT](https://arxiv.org/abs/1804.04732) framework.
+We also provide code that can be used to train models of natural variation using the [MUNIT](https://arxiv.org/abs/1804.04732) framework.  The code that we use to train these models is largely based on the original [implementation of MUNIT](https://github.com/NVlabs/MUNIT).
 
 * [Training models of natural variation](#training-models-of-natural-variation)
     1. [Retrieving a saved model of natural variation](#retrieving-a-saved-model-of-natural-variation)
@@ -175,7 +176,7 @@ import torch.nn as nn
 
 class MyModel(nn.Module):
   def __init__(self, fname): 
-    self.model = load_model(fname)
+    self.model = self.load_model(fname)
 
   def forward(x, delta):
     return self.model(x, delta)
