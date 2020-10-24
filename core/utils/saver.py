@@ -1,6 +1,16 @@
 import pandas as pd
 import os
 
+def save_eval_df(top1, top5, args):
+    """Save dataframe with results after evaulation."""
+
+    df = pd.DataFrame(
+            data=list(zip([top1], [top5], [args.architecture], [args.source_of_nat_var])),
+            columns=['Top1-Accuracy', 'Top5-Accuracy', 'Architecture', 'Challenge']
+        )
+    fname = os.path.join(args.save_path, 'results.pkl')
+    df.to_pickle(fname)
+
 class Saver:
     def __init__(self, args, n_epochs):
         """Saves top1 and top5 accuracies during training.
@@ -13,8 +23,6 @@ class Saver:
         self._top1, self._top5 = [], []
         self._args = args
         self._n_epochs = n_epochs
-
-        os.makedirs(args.save_path, exist_ok=True)
 
     def update(self, top1, top5):
         """Update top1 and top5 lists and save updated DataFrame.
