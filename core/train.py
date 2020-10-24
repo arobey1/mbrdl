@@ -9,7 +9,7 @@ import utils.dist_utils as dist_utils
 from utils.logger import TensorboardLogger, FileLogger
 from utils.meter import AverageMeter, NetworkMeter, TimeMeter
 from utils.arg_parser import get_parser
-from utils.saver import Saver
+from utils.saver import Saver, save_eval_df
 from models.load import load_model
 from classifiers.load import init_classifier
 from training.utils import distributed_predict, accuracy, correct
@@ -35,7 +35,14 @@ def main():
     trn_loader, val_loader, trn_samp, val_samp = get_loaders(args)
     model, criterion, optimizer = init_classifier(args)
     G = load_model(args, reverse=False)
+
+    # create directory to save outputs and save images
+    os.makedirs(args.save_path, exist_ok=True)
     save_images(trn_loader, val_loader, G, args)
+    if args.delta_dim == 2: save_grid(trn_loader, G)
+
+    # global start time for training
+    start_time = datetime.now()
 
     # reload classifier from checkpoint if --resume flag is given
     if args.resume: reload_from_cpkt(model, optimizer, args)
@@ -43,10 +50,11 @@ def main():
     # Evaluate classifier on validation set and quit
     if args.evaluate: 
         top1, top5 = validate(val_loader, model, criterion, 0, start_time)
-        print(f'Top1: {top1} | Top5: {top5}')
+        if args.local_rank == 0: 
+            save_eval_df(top1, top5, args)
+            print(f'Top1: {top1} | Top5: {top5}')
         return
 
-    start_time = datetime.now() 
     if args.distributed: dist_utils.sync_processes(args)
 
     scheduler = Scheduler(optimizer, args, tb, log)
@@ -262,11 +270,38 @@ def save_images(trn_loader, val_loader, G, args):
         val_path = os.path.join(args.save_path, 'val.png')
         save_image(val_imgs, val_path)
 
-        delta = torch.randn(trn_imgs.size(0), 8, 1, 1).cuda()
+        delta = torch.randn(trn_imgs.size(0), args.delta_dim, 1, 1).cuda()
         with torch.no_grad():
             out = G(trn_imgs.cuda(), delta)
         mb_path = os.path.join(args.save_path, 'model_based.png')
         save_image(out, mb_path)
+
+def save_grid(trn_loader, G, lower=-1., upper=1., num_pts=10):
+    """Grid nuisance space for 2-dimensional Delta spaces."""
+
+    imgs, _ = next(iter(trn_loader))
+    img = imgs[0].unsqueeze(0).cuda()
+    img_samples = None
+
+    for y in list(torch.linspace(lower, upper, steps=num_pts)):
+        row_images = []
+        for x in list(torch.linspace(lower, upper, steps=num_pts)):
+            grid_style = torch.tensor([x, y]).reshape(1, 2).cuda().float()
+            x_A_to_B = G(img, grid_style)
+            row_images.append(x_A_to_B)
+
+        row_sample = torch.cat(row_images, dim=-1)
+
+        if img_samples is None:
+            img_samples = row_sample
+        else:
+            img_samples = torch.cat([row_sample, img_samples], dim=-2)
+
+    fname_orig = os.path.join(args.save_path, 'original_grid.png')
+    save_image(img, fname_orig)
+
+    fname_grid = os.path.join(args.save_path, 'generated_grid.png')
+    save_image(img_samples, fname_grid)
 
 if __name__ == '__main__':
     main()
