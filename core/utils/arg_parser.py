@@ -11,9 +11,9 @@ def get_parser():
 
     # paths to various directories
     parser.add_argument('--train-data-dir', metavar='DIR', required=True, 
-                            help='Path to training dataset (only used for ImageNet).')
+                            help='Path to training dataset.')
     parser.add_argument('--val-data-dir', metavar='DIR', 
-                            help='Path to validation dataset (only used for ImageNet).')
+                            help='Path to validation dataset.')
     parser.add_argument('--save-path', type=str, 
                             help='Path for saving outputs')
     parser.add_argument('--logdir', default='', type=str,
@@ -64,7 +64,7 @@ def get_parser():
                             help='Number of classes in datset')
     
     # dataset
-    parser.add_argument('--dataset', required=True, type=str, choices=['imagenet', 'svhn', 'gtsrb', 'cure-tsr'],
+    parser.add_argument('--dataset', required=True, type=str, choices=['imagenet', 'svhn', 'gtsrb', 'cure-tsr', 'mnist'],
                             help='Dataset to use for training/testing classifier.')
     parser.add_argument('--source-of-nat-var', type=str, 
                             help='Source of natural variation')
