@@ -20,6 +20,8 @@ def get_parser():
                             help='Directory for tensorboard logs')
     parser.add_argument('--model-paths', type=str, nargs='*',
                             help="Path for model of natural variation")
+    parser.add_argument('--config', type=str, default='core/models/munit/munit.yaml', 
+                            help='Path to the MUNIT config file.')
     
     # training algorithms
     parser.add_argument('--mrt', action='store_true', 
