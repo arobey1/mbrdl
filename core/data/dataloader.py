@@ -7,6 +7,7 @@ import torchvision.datasets as datasets
 from data.svhn import SVHNSubsets
 from data.cure_tsr import CUREDataset
 from data.gtsrb import GTSRBSubsets
+from data.mnist import MNISTDataset
 from data.imagenet import DistValSampler, BatchTransformDataLoader, fast_collate
 
 def get_loaders(args):
@@ -20,6 +21,8 @@ def get_loaders(args):
         return get_cure_tsr_loaders(args)
     elif args.dataset == 'gtsrb':
         return get_gtsrb_loaders(args)
+    elif args.dataset == 'mnist':
+        return get_mnist_loaders(args)
     else: 
         raise NotImplementedError(f'Dataset {args.dataset} not implemented.')
 
@@ -69,6 +72,24 @@ def get_svhn_loaders(args):
     val_sampler = DistributedSampler(val_dataset) if args.distributed is True else None
     val_loader = DataLoader(
         val_dataset, batch_size=args.batch_size,
+        num_workers=args.workers, pin_memory=True, sampler=val_sampler)
+
+    return train_loader, val_loader, train_sampler, val_sampler
+
+def get_mnist_loaders(args):
+    """Getr dataloaders for MNIST dataset."""
+
+    if args.local_rank == 0:
+        print(f'Loading MNIST {args.source_of_nat_var} dataset...')
+
+    train_dataset = MNISTDataset('train', args.source_of_nat_var, dom='black', args=args)
+    train_sampler = DistributedSampler(train_dataset) if args.distributed is True else None
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=(train_sampler is None),
+        num_workers=args.workers, pin_memory=True, sampler=train_sampler)
+
+    val_dataset = MNISTDataset('test', args.source_of_nat_var, dom='rand', args=args)
+    val_sampler = DistributedSampler(val_dataset) if args.distributed is True else None
+    val_loader = DataLoader(val_dataset, batch_size=args.batch_size,
         num_workers=args.workers, pin_memory=True, sampler=val_sampler)
 
     return train_loader, val_loader, train_sampler, val_sampler
