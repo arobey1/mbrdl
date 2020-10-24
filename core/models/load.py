@@ -98,8 +98,6 @@ class MUNITModelOfNatVar(nn.Module):
             return gen_A, gen_B     # original order
         return gen_B, gen_A         # reversed order
 
-        
-
     @staticmethod
     def __get_config(path):
         """Load .yaml file as dictionary.
