@@ -9,23 +9,23 @@
 #   * 'svhn': ['contrast', 'brightness', 'contrast+brightness']
 #   * 'gtsrb': ['contrast', 'brightness']
 #   * 'cure-tsr': ['snow', 'rain', 'haze', etc] (see https://github.com/olivesgatech/CURE-TSR#challenging-conditions)
-export DATASET='cure-tsr'
-export TRAIN_DIR=./datasets/cure_tsr/raw_data
-export SOURCE='snow'
+export DATASET='mnist'
+export TRAIN_DIR=./datasets/mnist/MNIST
+export SOURCE='background-color'
 
 # Select your achitecture:
 #   * 'basic' is a relatively shallow CNN (see training/classifiers/basic.py)
 #   * 'resnet50' was used in our paper for the ImageNet/ImageNet-c experiments
 #   * you can also supply any of the models in torchvision.models (https://pytorch.org/docs/stable/torchvision/models.html)
 export ARCHITECTURE='basic'
-export N_CLASSES=14         # number of classes
+export N_CLASSES=10         # number of classes
 export SZ=32                # dataset image size (SZ x SZ x 3)
 export BS=64                # batch size
 
 # Select the model of natural variation and the dimension of nuisance space 
 # Note that this must match the dimension in models/munit.yaml
-export MODEL_PATH=./core/models/learned_models/cure_tsr/cure-snow-2.pt
-export DELTA_DIM=8
+export MODEL_PATH=./core/models/learned_models/mnist/mnist-bkgd-color.pt
+export DELTA_DIM=2
 
 # Other paths for recording data
 export LOG_DIR=./logs           # path to log tensorboard files
