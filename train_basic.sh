@@ -37,7 +37,7 @@ export N_GPUS_PER_NODE=4
 export N_NODES=1
 
 ulimit -n 4096
-python -m torch.distributed.launch \
+python3 -m torch.distributed.launch \
     --nproc_per_node=$N_GPUS_PER_NODE --nnodes=$N_NODES --node_rank=0 core/train.py \
     --train-data-dir $TRAIN_DIR --logdir $LOG_DIR --save-path $SAVE_PATH \
     --data-size $SZ --batch-size $BS --num-classes $N_CLASSES --init-bn0 --no-bn-wd --half-prec \
