@@ -23,6 +23,15 @@ def load_model(args, reverse=False):
             print(f'Loading MUNIT model: {fname}')
 
         G = MUNITModelOfNatVar(fname, reverse=reverse, args=args).cuda()
+
+        # save model to ONNX
+        # if args.local_rank == 0:
+        #     G = MUNITModelOfNatVar(fname, reverse=reverse, args=args)
+
+        #     dummy_x = torch.rand(256, 3, 32, 32)
+        #     dummy_delta = torch.randn(256, 2, 1, 1)
+        #     torch.onnx.export(G, (dummy_x, dummy_delta), 'munit.onnx', verbose=True)
+
         if args.half_prec is True:
             G = amp.initialize(G, opt_level=args.apex_opt_level, verbosity=0).half()
         return G
