@@ -19,11 +19,14 @@ def init_classifier(args):
     if args.architecture == 'basic':
         model = BasicNet(num_classes=args.num_classes).cuda()
 
-    elif args.architecture == 'resnet50':
-        model = resnet50(bn0=args.init_bn0, num_classes=args.num_classes, pretrained=args.pretrained).cuda()
+    # elif args.architecture == 'resnet50':
+    #     model = resnet50(bn0=args.init_bn0, num_classes=args.num_classes, pretrained=args.pretrained).cuda()
             
-    else:
+    elif 'inception' in args.architecture:
         model = models.__dict__[args.architecture](pretrained=args.pretrained, num_classes=args.num_classes, aux_logits=False).cuda()
+
+    else:
+        model = models.__dict__[args.architecture](pretrained=args.pretrained, num_classes=args.num_classes).cuda()
 
     if args.optimizer == 'sgd':
         # start with 0 lr. Scheduler will change this later
