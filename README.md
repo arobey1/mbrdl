@@ -82,7 +82,7 @@ The two main training python files are `train_munit.py` and `train.py`.  As the 
 
 We also include the code needed to train classifiers that are robust to natural variation.  Our implementation is based on the [Lambda Labs implementation](https://github.com/lambdal/imagenet18) of the ImageNet training repository.  
 
-To train a classifier on SVHN, GTSRB, or CURE-TSR, you can run the following shell script:
+To train a classifier on MNIST, SVHN, GTSRB, or CURE-TSR, you can run the following shell script:
 
 ```bash
 chmod +x train_basic.sh
@@ -100,7 +100,15 @@ In what follows, we describe different settings for thes files.
 
 ### Dataset selection
 
-By editing flags at the beginning of the file, you can change the dataset and the source of natural variation that are used for training/testing the classifier.  For example, to run with SVHN, you can set:
+By editing flags at the beginning of the file, you can change the dataset and the source of natural variation that are used for training/testing the classifier.  For example, to run with MNIST, you can set:
+
+```bash
+export DATASET='mnist'
+export TRAIN_DIR=./datasets/MNIST/mnist
+export SOURCE='background-color'
+```
+
+To run with SVHN, you can set:
 
 ```bash
 export DATASET='svhn'
@@ -166,10 +174,11 @@ Yu can set the path to a saved model of natural variation and the dimension of t
 
 ```bash
 export MODEL_PATH=./core/models/learned_models/svhn-brightness.pt
+export CONFIG_PATH=./core/models/munit/munit.yaml
 export DELTA_DIM=8
 ```
 
-Note that the dimension must match the `style_dim` parameter in core/models/munit/munit.yaml if you are using the MUNIT framework.
+The `CONFIG_PATH` should point to a `.yaml` file with appropriate settings for the MUNIT architecture.  An example is given in `core/models/munit/munit.yaml`.  Note that the dimension must match the `style_dim` parameter in core/models/munit/munit.yaml if you are using the MUNIT framework.
 
 ### Composing models of natural variation
 
