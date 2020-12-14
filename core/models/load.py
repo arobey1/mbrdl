@@ -22,7 +22,7 @@ def load_model(args, reverse=False):
         if args.setup_verbose is True and args.local_rank == 0:
             print(f'Loading MUNIT model: {fname}')
 
-        G = MUNITModelOfNatVar(fname, reverse=reverse, args=args).cuda()
+        G = MUNITModelOfNatVar(fname, reverse=reverse, config=args.config).cuda()
 
         # save model to ONNX
         # if args.local_rank == 0:
@@ -65,19 +65,19 @@ class CompositionModel(nn.Module):
         return x
 
 class MUNITModelOfNatVar(nn.Module):
-    def __init__(self, fname: str, reverse: bool, args: dict):
+    def __init__(self, fname: str, reverse: bool, config: str):
         """Instantiantion of pre-trained MUNIT model.
         
         Params:
             fname: File name of trained MUNIT checkpoint file.
             reverse: If True, returns model mapping from domain A-->B.
                 otherwise, model maps from B-->A.
-            args: train.py command line arguments.
+            config: Configuration .yaml file for MUNIT.
         """
 
         super(MUNITModelOfNatVar, self).__init__()
 
-        self._config = self.__get_config(args.config)
+        self._config = self.__get_config(config)
         self._fname = fname
         self._reverse = reverse
         self._gen_A, self._gen_B = self.__load()
