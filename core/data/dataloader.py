@@ -8,6 +8,7 @@ from data.svhn import SVHNSubsets
 from data.cure_tsr import CUREDataset
 from data.gtsrb import GTSRBSubsets
 from data.mnist import MNISTDataset
+from data.mnist_c import MNISTC_Dataset
 from data.imagenet import DistValSampler, BatchTransformDataLoader, fast_collate
 
 def get_loaders(args):
@@ -23,6 +24,8 @@ def get_loaders(args):
         return get_gtsrb_loaders(args)
     elif args.dataset == 'mnist':
         return get_mnist_loaders(args)
+    elif args.dataset == 'mnist-c' or args.dataset == 'mnist_c':
+        return get_mnist_c_loaders(args)
     else: 
         raise NotImplementedError(f'Dataset {args.dataset} not implemented.')
 
@@ -77,7 +80,7 @@ def get_svhn_loaders(args):
     return train_loader, val_loader, train_sampler, val_sampler
 
 def get_mnist_loaders(args):
-    """Getr dataloaders for MNIST dataset."""
+    """Get dataloaders for MNIST dataset."""
 
     if args.local_rank == 0:
         print(f'Loading MNIST {args.source_of_nat_var} dataset...')
@@ -93,6 +96,25 @@ def get_mnist_loaders(args):
         num_workers=args.workers, pin_memory=True, sampler=val_sampler)
 
     return train_loader, val_loader, train_sampler, val_sampler
+
+def get_mnist_c_loaders(args):
+    """Get dataloaders for MNIST dataset."""
+
+    if args.local_rank == 0:
+        print(f'Loading MNIST-C dataset...')
+
+    train_dataset = MNISTC_Dataset('train', dom='clean', args=args)
+    train_sampler = DistributedSampler(train_dataset) if args.distributed is True else None
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=(train_sampler is None),
+        num_workers=args.workers, pin_memory=True, sampler=train_sampler)
+
+    val_dataset = MNISTC_Dataset('test', dom='corrupted', args=args)
+    val_sampler = DistributedSampler(val_dataset) if args.distributed is True else None
+    val_loader = DataLoader(val_dataset, batch_size=args.batch_size,
+        num_workers=args.workers, pin_memory=True, sampler=val_sampler)
+
+    return train_loader, val_loader, train_sampler, val_sampler
+
 
 def get_cure_tsr_loaders(args):
     """Get dataloaders for CURE-TSR dataset."""

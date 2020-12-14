@@ -21,7 +21,7 @@ parser.add_argument('--config', type=str, default='core/models/munit/munit.yaml'
                         help='Path to the MUNIT config file.')
 parser.add_argument('--output_path', type=str, default='./munit', 
                         help="Path where images/checkpoints will be saved")
-parser.add_argument('--dataset', type=str, default='svhn', choices=['svhn', 'cure-tsr', 'gtsrb', 'imagenet', 'mnist'], 
+parser.add_argument('--dataset', type=str, default='svhn', choices=['svhn', 'cure-tsr', 'gtsrb', 'imagenet', 'mnist', 'mnist-c'], 
                         help='Dataset to use for training MUNIT')
 parser.add_argument('--data-size', type=int, default=32, 
                         help='Image size for training MUNIT')

@@ -66,7 +66,7 @@ def get_parser():
                             help='Number of classes in datset')
     
     # dataset
-    parser.add_argument('--dataset', required=True, type=str, choices=['imagenet', 'svhn', 'gtsrb', 'cure-tsr', 'mnist'],
+    parser.add_argument('--dataset', required=True, type=str, choices=['imagenet', 'svhn', 'gtsrb', 'cure-tsr', 'mnist', 'mnist_c'],
                             help='Dataset to use for training/testing classifier.')
     parser.add_argument('--source-of-nat-var', type=str, 
                             help='Source of natural variation')

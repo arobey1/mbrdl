@@ -9,6 +9,7 @@ from data.cure_tsr import CUREDataset
 from data.gtsrb import GTSRBSubsets
 from data.mnist import MNISTDataset
 from data.imagenet import BasicImageNetDataset
+from data.mnist_c import MNISTC_Dataset
 
 def get_munit_loaders(args):
     """Return dataloaders based on command line argument for dataset."""
@@ -23,6 +24,8 @@ def get_munit_loaders(args):
         return get_imagenet_loaders(args)
     elif args.dataset == 'mnist':
         return get_mnist_loaders(args)
+    elif args.dataset == 'mnist-c' or args.dataset == 'mnist_c':
+        return get_mnist_c_loaders(args)
     else:
         raise NotImplementedError(f'Dataset {args.dataset} is not implemented.')
 
@@ -51,6 +54,19 @@ def get_mnist_loaders(args):
                             args=args, return_labels=False)
     test_B = MNISTDataset('test', args.source_of_nat_var, dom='rand',
                             args=args, return_labels=False)
+
+    return _to_loader(train_A, train_B, test_A, test_B)
+
+def get_mnist_c_loaders(args):
+    
+    if args.local_rank == 0:
+        print(f'Loading MNIST-C dataset...')
+
+    train_A = MNISTC_Dataset('train', dom='clean', args=args, return_labels=False)
+    train_B = MNISTC_Dataset('train', dom='corrupted', args=args, return_labels=False)
+
+    test_A = MNISTC_Dataset('test', dom='clean', args=args, return_labels=False)
+    test_B = MNISTC_Dataset('test', dom='corrupted', args=args, return_labels=False)
 
     return _to_loader(train_A, train_B, test_A, test_B)
 
